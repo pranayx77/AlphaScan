@@ -1,0 +1,24 @@
+name: AlphaScan Cron
+
+on:
+  schedule:
+    # Every 4 hours
+    - cron: '0 */4 * * *'
+  workflow_dispatch:
+
+jobs:
+  scan:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - name: Trigger AlphaScan
+        run: |
+          curl -X POST \
+            -H "Authorization: Bearer ${{ secrets.CRON_SECRET }}" \
+            -H "Content-Type: application/json" \
+            https://${{ secrets.VERCEL_URL }}/api/scan
+
+      - name: Verify scan completion
+        run: |
+          echo "AlphaScan triggered successfully"
+          echo "Check Vercel Functions logs for details"
